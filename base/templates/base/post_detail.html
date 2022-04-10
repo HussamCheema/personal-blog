@@ -1,0 +1,9 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <div>
+        <small>@{{post.user.username}}    {{post.created|timesince}} ago</small>
+        <h3><a href="">{{post.title}}</a></h3>
+        <p>{{post.body}}</p>
+    </div>
+{% endblock %}

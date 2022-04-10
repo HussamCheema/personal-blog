@@ -11,23 +11,28 @@
 </head>
 <body>
 
-    <div class="container-fluid h-100">
-        <div class="row h-100">
-            <div class="col-2 text-center sidebar">
-                <h3>Side Bar</h3>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-2 sidebar h-100 py-2 d-flex align-items-center justify-content-center fixed-top">
+                <div>
+                    <h3>Side Bar</h3>
+                    <hr>
 
-                <div>
-                    <a href="{% url 'home' %}">Home</a>
-                </div>
-                <div>
-                    <a href="{% url 'about' %}">About Me</a>
-                </div>
-                <div>
-                    <a href="{% url 'contact' %}">Contact</a>
+                    <div>
+                        <a href="{% url 'home' %}">Home</a>
+                    </div>
+                    <div>
+                        <a href="{% url 'about' %}">About Me</a>
+                    </div>
+                    <div>
+                        <a href="{% url 'contact' %}">Contact</a>
+                    </div>
+
                 </div>
 
             </div>
-            <div class="col-10">
+            
+            <div class="col-10 offset-2">
                 <div class="container-fluid">
                     <h3>Live Feed</h3>
                     <div class="container">
