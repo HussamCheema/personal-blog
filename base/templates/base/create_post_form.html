@@ -1,0 +1,106 @@
+{% extends 'main.html' %}
+
+{% block tinymce %}
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+      selector: '#mytextarea',
+      width: 1230,
+      height: 1000,
+      plugins: [
+        'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
+        'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
+        'media', 'table', 'emoticons', 'template', 'help', 'codesample'
+        ],
+        toolbar: 'insertfile undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image codesample | print preview media | forecolor backcolor emoticons',
+        codesample_global_prismjs: true,
+        file_picker_types: "image media",
+
+        file_picker_callback: function (cb, value, meta) {
+          var input = document.createElement("input");
+          input.setAttribute("type", "file");
+          if (meta.filetype == "image") {
+              input.setAttribute("accept", "image/*");}
+          if (meta.filetype == "media") {
+          input.setAttribute("accept", "video/*");}
+
+          input.onchange = function () {     
+              var file = this.files[0];
+              var reader = new FileReader();
+              reader.onload = function () {
+                  var id = "blobid" + (new Date()).getTime();
+                  var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                  var base64 = reader.result.split(",")[1];
+                  var blobInfo = blobCache.create(id, file, base64);
+                  blobCache.add(blobInfo);
+                cb(blobInfo.blobUri(), { title: file.name });
+              };
+              reader.readAsDataURL(file);
+          };
+          input.click();
+        },
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+     
+     <!-- BACK BUTTON -->
+    <div class="layout__boxHeader">
+        <div class="layout__boxTitle">
+            <a href="{{request.META.HTTP_REFERER}}">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                <title>arrow-left</title>
+                <path
+                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+                </path>
+            </svg>
+            </a>
+            <br><br>
+            <div><h3>Create/Update Post</h3></div>
+            <br><br>
+        </div>
+    </div>
+
+
+
+      <div>
+        <form action="" method="POST">
+          {% csrf_token %}
+
+          <div class="">
+            <label class="form-label">Enter a Category</label>
+            <input class="form-control" list="category-list" name="category" placeholder="Type to search...">
+            <datalist id="category-list">
+              {% for category in categories %}
+                <option value="{{category.name}}">{{category.name}}</option>
+              {% endfor %}
+            </datalist>
+          </div>
+
+          <div class="mt-3">
+            <label class="form-label">Post Title</label>
+            <input type="text" class="form-control" name="title" id="">
+          </div>
+          
+          <div class="mt-3">
+            <label class="form-label">Post Description</label>
+            <textarea class="form-control" name="description" id="form4Example3" rows="4"></textarea>
+          </div>
+
+          <div class="mt-3">
+            <label class="form-label">Post Body</label>
+            <textarea id="mytextarea" name="body"></textarea>
+          </div>
+
+          <div class="mt-3 mb-5">
+            <input class="btn btn-primary" type="submit" value="Create Post">
+          </div>
+          
+        </form>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

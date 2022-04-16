@@ -1,15 +1,56 @@
 {% extends 'main.html' %}
 
 {% block content %}
-    <h1>Homepage</h1>
+    <div style="text-align: center;"><h1>Homepage</h1></div>
+
+    {% if request.user.is_authenticated %}
+        <a href="{% url 'create-post' %}">Create Post</a>
+        <br><br>
+    {% endif %}
 
     {% for post in posts%}
         <div>
-            <small>@{{post.user.username}}    {{post.created|timesince}} ago</small>
+            <small>@{{post.author.username}}    {{post.created|timesince}} ago</small>
             <h3><a href="{% url 'post-detail' post.id %}">{{post.title}}</a></h3>
-            <p>{{post.body}}</p>
+            <p>{{post.description}}</p>
+            <span class="badge rounded-pill bg-dark">{{post.category}}</span>
         </div>
+        {% if request.user.is_authenticated %}
+            <a href="">Edit Post</a>
+            <br>
+        {% endif %}
         <hr>
     {% endfor %}
+
+    <!-- templates/home.html -->
+    <!-- Pagination -->
+    <nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if not posts.has_previous %} disabled {% endif %}">
+                <a class="page-link" href="{% if posts.has_previous %} {% url 'list_posts' posts.previous_page_number %}{% endif %} ">Previous</a>
+            </li>
+    
+            {% if posts.number|add:'-1' > 1 %}
+                <li class="page-item disabled"><a class="page-link">&hellip;</a></li>
+            {% endif %}
+    
+            {% for i in posts.paginator.page_range %}
+                {% if posts.number == i %}
+                    <li class="active page-item disabled"><a class="page-link" href="#">{{ i }}</a></li>
+                {% elif i > posts.number|add:'-2' and i < posts.number|add:'2' %}
+                    <li class="page-item"><a class="page-link" href="{% url 'list_posts' i %}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+    
+            {% if posts.paginator.num_pages > posts.number|add:'1' %}
+                <li class="page-item disabled"><a class="page-link" href="#">&hellip;</a></li>
+            {% endif %}
+    
+            <li class="page-item {% if not posts.has_next %} disabled {% endif %}">
+                <a class="page-link" href="{% if posts.has_next %} {% url 'list_posts' posts.next_page_number %} {% endif %}">Next</a>
+            </li>
+        </ul>
+    </nav>  
+    <!-- END Pagination -->
 
 {% endblock %}
