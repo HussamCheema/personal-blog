@@ -5,8 +5,6 @@
 <script>
     tinymce.init({
       selector: '#mytextarea',
-      width: 1230,
-      height: 1000,
       plugins: [
         'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
         'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
@@ -40,16 +38,17 @@
           input.click();
         },
     });
+
 </script>
+
 {% endblock %}
 
 {% block content %}
   <div class="container">
      
-     <!-- BACK BUTTON -->
     <div class="layout__boxHeader">
         <div class="layout__boxTitle">
-            <a href="{{request.META.HTTP_REFERER}}">
+            <a href="{{request.META.HTTP_REFERER}}" name="back">
             <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
                 <title>arrow-left</title>
                 <path
@@ -63,43 +62,39 @@
         </div>
     </div>
 
+    <div>
+      <form action="" method="POST">
+        {% csrf_token %}
 
+        
+          <label class="form-label">Enter a Category</label>
 
-      <div>
-        <form action="" method="POST">
-          {% csrf_token %}
+          <select class="form-select" multiple name="category" placeholder="Type to search...">
+            {% for category in categories %}
+              <option value="{{category.name}}">{{category.name}}</option>
+            {% endfor %}
+          </select>
 
-          <div class="">
-            <label class="form-label">Enter a Category</label>
-            <input class="form-control" list="category-list" name="category" placeholder="Type to search...">
-            <datalist id="category-list">
-              {% for category in categories %}
-                <option value="{{category.name}}">{{category.name}}</option>
-              {% endfor %}
-            </datalist>
-          </div>
+        <div class="mt-3">
+          <label class="form-label">Post Title</label>
+          <input type="text" class="form-control" name="title" id="">
+        </div>
+        
+        <div class="mt-3">
+          <label class="form-label">Post Description</label>
+          <textarea class="form-control" name="description" id="form4Example3" rows="4"></textarea>
+        </div>
 
-          <div class="mt-3">
-            <label class="form-label">Post Title</label>
-            <input type="text" class="form-control" name="title" id="">
-          </div>
-          
-          <div class="mt-3">
-            <label class="form-label">Post Description</label>
-            <textarea class="form-control" name="description" id="form4Example3" rows="4"></textarea>
-          </div>
+        <div class="mt-3">
+          <label class="form-label">Post Body</label>
+          <textarea id="mytextarea" name="body"></textarea>
+        </div>
 
-          <div class="mt-3">
-            <label class="form-label">Post Body</label>
-            <textarea id="mytextarea" name="body"></textarea>
-          </div>
-
-          <div class="mt-3 mb-5">
-            <input class="btn btn-primary" type="submit" value="Create Post">
-          </div>
-          
-        </form>
-      </div>
+        <div class="mt-3 mb-5">
+          <input class="btn btn-primary" type="submit" value="Create Post">
+        </div>
+        
+      </form>
     </div>
   </div>
 

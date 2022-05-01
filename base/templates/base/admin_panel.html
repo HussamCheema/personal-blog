@@ -1,0 +1,12 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+    <a class="btn btn-primary" href="{% url 'create-post' %}">Create Post</a>
+    &nbsp; &nbsp;
+    <a class="btn btn-primary" href="{% url 'create-category' %}">Create Category</a>
+    <br> <br>
+{% endif %}
+
+{% endblock %}

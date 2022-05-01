@@ -17,7 +17,7 @@ class Post(models.Model):
     description = models.TextField(null=True, blank=True)
     body = models.TextField()
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    category = models.ManyToManyField(Category)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 

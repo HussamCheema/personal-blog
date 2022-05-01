@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .models import Post, Category
-from .forms import PostForm
+from .forms import PostForm, CategoryForm
 from django.core.paginator import Paginator
 
 
@@ -25,29 +25,71 @@ def home(request, page=1):
     return render(request, 'base/home.html', context)
 
 
+@login_required(redirect_field_name='back', login_url='login')
+def createCategory(request):
+
+    form = CategoryForm()
+    if request.method == 'POST':
+        name = request.POST['name']
+        desc = request.POST['description']
+        Category.objects.create(
+            name = name,
+            description = desc
+        )
+        
+        return redirect('home')
+
+    context = {'form': form}
+    return render(request, 'base/create_category_form.html', context)
+
+
 @login_required(login_url='login')
+def deleteCategory(request, pk):
+    category = Category.objects.get(id=pk)
+
+    if request.method == 'POST':
+        category.delete()
+        return redirect('home')
+    return render(request, 'base/delete_category.html', {'obj': category})
+
+
+@login_required(redirect_field_name='back', login_url='login')
 def createPost(request):
 
     form = PostForm()
     categories = Category.objects.all()
     if request.method == 'POST':
-        category = Category.objects.create(name=request.POST['category'])
-        post_title = request.POST['title']
-        post_description = request.POST['description']
-        post_body = request.POST['body']
+        import pdb; pdb.set_trace()
+        title = request.POST['title']
+        description = request.POST['description']
+        body = request.POST['body']
+        categories = request.POST.getlist('category')
+        category_objs = [Category.objects.get(name=cat) for cat in categories]
 
-        Post.objects.create(
-            author=request.user,
-            title=post_title,
-            description=post_description,
-            category=category,
-            body=post_body,
+        post = Post.objects.create(
+            author = request.user,
+            title = title,
+            description = description,
+            body = body,
         )
+        post.category.add(*category_objs)
         
         return redirect('home')
 
     context = {'form': form, 'categories': categories}
     return render(request, 'base/create_post_form.html', context)
+
+@login_required(login_url='login')
+def deletePost(request, pk):
+    post = Post.objects.get(id=pk)
+
+    if request.user != post.author:
+        return HttpResponse('Your have no permission to delete this post')
+
+    if request.method == 'POST':
+        post.delete()
+        return redirect('home')
+    return render(request, 'base/delete_post.html', {'obj': post})
 
 
 def postDetail(request, pk):
@@ -69,9 +111,17 @@ def about(request):
     return render(request, 'base/about.html', context)
 
 
-def contact(request):
+def privacy(request):
     
     context = {
 
     }
-    return render(request, 'base/contact.html', context)
+    return render(request, 'base/privacy_policy.html', context)
+
+
+def adminPanel(request):
+    
+    context = {
+
+    }
+    return render(request, 'base/admin_panel.html', context)
