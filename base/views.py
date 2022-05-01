@@ -79,6 +79,26 @@ def createPost(request):
     context = {'form': form, 'categories': categories}
     return render(request, 'base/create_post_form.html', context)
 
+
+@login_required(login_url='login')
+def updatePost(request, pk):
+    post = Post.objects.get(id=pk)
+    # if request.user != post.author:
+    #     return HttpResponse('Your are not allowed here!!')
+
+    # if request.method == 'POST':
+    #     topic_name = request.POST.get('topic')
+    #     topic, created = Topic.objects.get_or_create(name=topic_name)
+    #     room.name = request.POST.get('name')
+    #     room.topic = topic
+    #     room.description = request.POST.get('description')
+    #     room.save()
+    #     return redirect('home')
+
+    context = {'post': post}
+    return render(request, 'base/create_post_form.html', context)
+
+
 @login_required(login_url='login')
 def deletePost(request, pk):
     post = Post.objects.get(id=pk)
